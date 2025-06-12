@@ -1,13 +1,15 @@
 import os
 from database import init_db
 from pathlib import Path
+from database import seeder
 
 def setup():
     # Check if database exists, if not, initialize
     if not os.path.exists(Path("UM.db")):
         print("[i] Initializing database...")
         init_db.initialize_database()
-        
+        print("fill database")
+        seeder.seed_database()
     else:
         print("[i] Database found.")
 
