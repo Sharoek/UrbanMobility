@@ -1,5 +1,5 @@
 from models.user import User
-from database.repositories import UserRepository
+from database.userRepository import UserRepository
 
 class UserService:
     def __init__(self):

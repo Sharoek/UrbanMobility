@@ -1,23 +1,16 @@
-from cryptography.fernet import Fernet
-import os
+from cryptography.hazmat.primitives.ciphers.aead import AESSIV
+import base64
+from encryption.key_management import load_key
 
-KEY_FILE = "fernet.key"
+# AES-SIV needs a 64-byte key for AES-256-SIV
+key = load_key()
+siv = AESSIV(key)
 
-def generate_key():
-    key = Fernet.generate_key()
-    with open(KEY_FILE, "wb") as f:
-        f.write(key)
+def encrypt_data(value: str) -> str:
+    ciphertext = siv.encrypt(value.encode(), [])
+    return base64.b64encode(ciphertext).decode()
 
-def load_key():
-    if not os.path.exists(KEY_FILE):
-        generate_key()
-    with open(KEY_FILE, "rb") as f:
-        return f.read()
-
-cipher = Fernet(load_key())
-
-def encrypt_data(data: str) -> str:
-    return cipher.encrypt(data.encode()).decode()
-
-def decrypt_data(encrypted_data: str) -> str:
-    return cipher.decrypt(encrypted_data.encode()).decode()
+def decrypt_data(encrypted_value: str) -> str:
+    ciphertext = base64.b64decode(encrypted_value)
+    plaintext = siv.decrypt(ciphertext, [])
+    return plaintext.decode()
