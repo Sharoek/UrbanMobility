@@ -1,4 +1,7 @@
 from menus.base_menu import BaseMenu
+from states.updatepasswordstate import UpdatePasswordState
+from states.editscooterstate import editScooterState
+from states.searchscooterstate import searchScooterState
 
 class systemAdminMenu(BaseMenu):
     #Same as Service Engineer: 
@@ -27,6 +30,7 @@ class systemAdminMenu(BaseMenu):
     def __init__(self, username, context):
         super().__init__(username, context)
         self.menu_options = {
+            "0": "Logout",
             "1": "Update Password",
             "2": "Update Scooter Attributes",
             "3": "Search Scooter Information",
@@ -56,15 +60,14 @@ class systemAdminMenu(BaseMenu):
             print(f"{key}. {value}")
     
     def handle_choice(self, choice):
-        if choice == "1":
-            print("Updating password...")
-            # Logic to update password
+        if choice == 0:
+            exit() # Exit the menu and go back to the previous state
+        if choice == 1:
+            return UpdatePasswordState(self.context)
         elif choice == "2":
-            print("Updating scooter attributes...")
-            # Logic to update scooter attributes
+            return editScooterState(self.context)
         elif choice == "3":
-            print("Searching scooter information...")
-            # Logic to search scooter information
+            return searchScooterState(self.context)
         elif choice == "4":
             print("Checking user list and roles...")
             # Logic to check user list and roles
