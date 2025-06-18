@@ -13,8 +13,6 @@ class BaseMenu(ABC):
             self.show_options()
             choice = verify_number_input("Input your choice: ", 0, len(self.menu_options)-1)
             try:
-                if choice == 0:
-                    return self.context.set_state(None)  # Exit the menu
                 state = self.handle_choice(choice)
                 
                 if state is not None:

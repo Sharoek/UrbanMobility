@@ -7,3 +7,4 @@ class AppState(ABC):
     @abstractmethod
     def run(self):
         pass
+    

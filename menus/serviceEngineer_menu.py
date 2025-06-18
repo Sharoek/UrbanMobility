@@ -1,5 +1,7 @@
 from menus.base_menu import BaseMenu
 from states.updatepasswordstate import UpdatePasswordState
+from states.editscooterstate import editScooterState
+from states.searchscooterstate import searchScooterState
 
 class serviceEngineerMenu(BaseMenu):
     def __init__(self, username, context):
@@ -21,14 +23,14 @@ class serviceEngineerMenu(BaseMenu):
             print(f"{key}. {value}")
     
     def handle_choice(self, choice):
+        if choice == 0:
+            exit() # Exit the menu and go back to the previous state
         if choice == 1:
             return UpdatePasswordState(self.context)
         elif choice == 2:
-            print("Updating scooter attributes...")
-            # Logic to update scooter attributes
+            return editScooterState(self.context)
         elif choice == 3:
-            print("Searching scooter information...")
-            # Logic to search scooter information
+            return searchScooterState(self.context)
         else:
             print("Invalid choice. Please try again.")
             return True

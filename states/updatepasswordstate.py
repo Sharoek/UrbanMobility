@@ -2,6 +2,10 @@ from .appstate import AppState
 from encryption.validators import validate_password
 class UpdatePasswordState(AppState):
     def run(self):
+        if self.context.role != "service_engineer":
+            print("Access denied. This function is only available to service engineers.")
+            self.context.set_state(None)
+            return
         print("=== Update Password ===\n")
         username = self.context.username
         if not username:
@@ -27,4 +31,4 @@ class UpdatePasswordState(AppState):
         else:
             print(f"Failed to update password for user '{username}'.")
 
-        self.context.set_state(None)  # Return to the previous state or main menu
+        self.context.go_back()

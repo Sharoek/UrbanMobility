@@ -6,9 +6,15 @@ class AppContext:
         self.username = None
         self.role = None
         self.user_repo = None
+        self.previous_state = LoginState(self)
 
     def set_state(self, state):
+        self.previous_state = self.state
         self.state = state
+
+    def go_back(self):
+        self.state = self.previous_state
+
 
     def run(self):
         while self.state:
