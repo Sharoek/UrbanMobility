@@ -139,6 +139,11 @@ class UserRepository:
     def edit_scooter(self, scooter: Scooter, item, value):
         """Edit scooter details in the database."""
         allowed_columns = {
+            "model": scooter.model,
+            "brand": scooter.brand,
+            "serial_number": scooter.serial_number,
+            "top_speed": scooter.top_speed,
+            "battery_capacity": scooter.battery_capacity,
             "state_of_charge": scooter.state_of_charge,
             "min_soc": scooter.min_soc,
             "max_soc": scooter.max_soc,

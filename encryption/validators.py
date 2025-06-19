@@ -142,3 +142,43 @@ def validate_last_maintanence(date: str, previous_date: str) -> bool:
         # Raised if the format is wrong or date is invalid (e.g. 2023-02-30)
         print(f"The format provided is wrong: {new_dt}, it needs to be in the fomat YYYY-MM-DD" )
         return False
+
+def validate_brand(brand: str) -> bool:
+    if not brand:
+        print("[✖] Brand cannot be empty.")
+        return False
+    if len(brand) < 2 or len(brand) > 50:
+        print("[✖] Brand must be between 2 and 50 characters.")
+        return False
+    if re.match(r'^[A-Za-z\s\-]+$', brand):
+        return True
+    return False
+
+def validate_serial_number(serial_number: str) -> bool:
+    if not serial_number:
+        print("[✖] Serial number cannot be empty.")
+        return False
+    if len(serial_number) < 10 or len(serial_number) > 17:
+        print("[✖] Serial number must be between 10 and 17 characters.")
+        return False
+    if re.match(r'^[A-Za-z0-9]+$', serial_number):
+        return True
+    print("[✖] Serial number must be alphanumeric only.")
+    return False
+
+def validate_model(model: str) -> bool:
+    model = model.strip()
+    if not model:
+        print("[✖] Model cannot be empty.")
+        return False
+    if len(model) < 2 or len(model) > 50:
+        print("[✖] Model must be between 2 and 50 characters.")
+        return False
+    
+    # Allow letters, numbers, spaces, hyphens, underscores, dots
+    pattern = r'^[A-Za-z0-9\s\-_.]+$'
+    if re.match(pattern, model):
+        print("[✖] Model must be alphanumeric, spaces, hyphens, underscores or dots only.")
+        return True
+    
+    return False

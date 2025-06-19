@@ -64,9 +64,9 @@ class systemAdminMenu(BaseMenu):
             exit() # Exit the menu and go back to the previous state
         if choice == 1:
             return UpdatePasswordState(self.context)
-        elif choice == "2":
+        elif choice == 2:
             return editScooterState(self.context)
-        elif choice == "3":
+        elif choice == 3:
             return searchScooterState(self.context)
         elif choice == "4":
             print("Checking user list and roles...")
