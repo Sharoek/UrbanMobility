@@ -2,7 +2,6 @@ from dataclasses import dataclass
 
 @dataclass
 class Traveller:
-    customer_id: int
     first_name: str
     last_name: str
     birthday: str

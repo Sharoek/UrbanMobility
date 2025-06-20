@@ -3,6 +3,7 @@ from models.user import User
 from database.queries import INSERT_USER, GET_USER_BY_ID, GET_ALL_USERS
 from encryption.encryption import encrypt_data
 from encryption.hashing import verify_password, hash_password
+import uuid
 
 class seederRepository:
     def __init__(self):
@@ -24,11 +25,27 @@ class seederRepository:
 
     def save_traveller_to_db(self, traveller):
         """Save a traveller to the database."""
+        # Convert a UUID to a 32-character hexadecimal string
+        customer_id = uuid.uuid4().hex
+        traveller.first_name = encrypt_data(traveller.first_name)
+        traveller.last_name = encrypt_data(traveller.last_name)
+        traveller.birthday = encrypt_data(traveller.birthday)
+        traveller.gender = encrypt_data(traveller.gender)
+        traveller.street_name = encrypt_data(traveller.street_name)
+        traveller.house_number = encrypt_data(traveller.house_number)
+        traveller.zip_code = encrypt_data(traveller.zip_code)
+        traveller.city = encrypt_data(traveller.city)
+        traveller.email_address = encrypt_data(traveller.email_address)
+        traveller.mobile_phone = encrypt_data(traveller.mobile_phone)
+        traveller.driving_license_number = encrypt_data(traveller.driving_license_number)
+
+
+
         with get_connection() as conn:
             try:
                 conn.execute(
                     "INSERT INTO travellers (customer_id, first_name, last_name, birthday, gender, street_name, house_number, zip_code, city, email_address, mobile_phone, driving_license_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (traveller.customer_id, traveller.first_name, traveller.last_name, traveller.birthday, traveller.gender, traveller.street_name, traveller.house_number, traveller.zip_code, traveller.city, traveller.email_address, traveller.mobile_phone, traveller.driving_license_number)
+                    (customer_id, traveller.first_name, traveller.last_name, traveller.birthday, traveller.gender, traveller.street_name, traveller.house_number, traveller.zip_code, traveller.city, traveller.email_address, traveller.mobile_phone, traveller.driving_license_number)
                 )
                 conn.commit()
                 print(f"[✔] Traveller '{traveller.first_name} {traveller.last_name}' added successfully.")

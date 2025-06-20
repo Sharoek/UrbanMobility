@@ -1,7 +1,10 @@
 import re
 from datetime import datetime
+from log.manager import LogManager
 # all validation should be whitelisting, meaning only the characters specified in the regex are allowed
 # and everything else is rejected
+
+
 
 def validate_username(username: str) -> bool:
     """
@@ -34,10 +37,31 @@ def validate_password(password: str) -> bool:
     return False
 
 def validate_zip_code(zip_code: str) -> bool:
-    """ Dutch format: 1234AB """
-    if re.fullmatch(r"\d{4}[A-Z]{2}", zip_code) is not None: 
-        return True
-    return False
+    """
+    Validates Dutch zip code:
+    - Format: 1234AB or 1234 AB
+    - Digits: 1000 to 9999
+    - Letters: Not SA, SD, or SS
+    """
+    zip_code = zip_code.strip().upper()
+    
+    # Match structure
+    match = re.fullmatch(r"(\d{4})\s?([A-Z]{2})", zip_code)
+
+    if not match:
+        return False
+
+    digits, letters = match.groups()
+    
+    # Check numeric range
+    if not (1000 <= int(digits) <= 9999):
+        return False
+
+    # Disallowed suffixes
+    if letters in {"SA", "SD", "SS"}:
+        return False
+    
+    return True
 
 def validate_mobile(phone: str) -> bool:
     """ Must be 8 digits (assumes +31-6 is already included elsewhere) """
@@ -46,16 +70,31 @@ def validate_mobile(phone: str) -> bool:
     return False
 
 def validate_driving_license(dl: str) -> bool:
-    """ Format: XDDDDDDDD or XXDDDDDDD """
+    """ Format: XDDDDD1DDD or XXDDDDDDD """
     if re.fullmatch(r"[A-Z]{1,2}\d{7,8}", dl) is not None:
         return True
     return False
 
-def validate_age(age: int) -> bool:
-    """ Validates age between 1 and 119 """
-    if isinstance(age, int) and 0 < age < 120:
+def validate_birthday(birthday: str) -> bool:
+    """ Format: YYYY-MM-DD """
+    try:
+        datetime.strptime(birthday, "%Y-%m-%d")
+
         return True
-    return False
+    except ValueError:
+        return False
+
+def validate_birthday_range(birthday: str) -> bool:
+    """
+    Validates that the birthday is between 18 and 100 years ago.
+    """
+    try:
+        birth_date = datetime.strptime(birthday, "%Y-%m-%d")
+        today = datetime.now()
+        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+        return 18 <= age <= 90
+    except ValueError:
+        return False
 
 def validate_email(email: str) -> bool:
     pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
@@ -181,4 +220,59 @@ def validate_model(model: str) -> bool:
         print("[✖] Model must be alphanumeric, spaces, hyphens, underscores or dots only.")
         return True
     
+    return False
+
+def get_valid_input(prompt, validator, error, max_attempts=3, username="", suspicious=False):
+    log_manager = LogManager()
+    attempts = 0
+    while True:
+        value = input(prompt)
+        if validator(value):
+            return value
+        else:
+            print(error)
+            attempts += 1
+            if attempts >= max_attempts:
+                log_manager.log(username, f'{error} | too many tries', "", suspicious)
+
+def contains_null_bytes(filepath):
+    try:
+        with open(filepath, "rb") as f:
+            chunk_size = 4096
+            while chunk := f.read(chunk_size):
+                if b'\x00' in chunk:
+                    return True
+        return False
+    except Exception as e:
+        print(f"✖ Error reading file for null byte check: {e}")
+        return False
+
+def validate_street(street: str) -> bool:
+        # Trim whitespace
+    street = street.strip()
+    #This allows: Letters, digits, spaces ., ', /, -, and Length between 2 and 100
+    pattern = r"^[\w\.\'\/\- ]{2,100}$"
+    if re.match(pattern, street):
+        return True
+    return False
+
+def validate_house_number(house_number: str) -> bool:
+    # Trim whitespace
+    house_number = house_number.strip()
+    #This allows: Letters, digits, spaces ., ', /, -, and Length between 1 and 10
+    pattern = r"^[\w\.\'\/\- ]{1,10}$"
+    if re.match(pattern, house_number):
+        return True
+    return False
+
+def valid_housenumber(house_number: str) -> bool:
+    # Trim whitespace
+    house_number = house_number.strip()
+    # Pattern for a single valid house number
+    single = r"[1-9][0-9]{0,3}([\-\/]?[a-zA-Z0-9]{0,4})?"
+    
+    # Full pattern: either a single house number or a range of two
+    pattern = rf"^{single}(-{single})?$"
+    if re.match(pattern, house_number):
+        return True
     return False

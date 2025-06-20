@@ -27,7 +27,6 @@ def seed_database():
     )
 
     traveller1 = Traveller(
-        customer_id=1,
         first_name="John",
         last_name="Doe",
         birthday="1990-01-01",
@@ -42,7 +41,6 @@ def seed_database():
     )
 
     traveller2 = Traveller(
-        customer_id=2,
         first_name="Jane",
         last_name="Smith",
         birthday="1992-02-02",

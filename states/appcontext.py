@@ -7,6 +7,7 @@ class AppContext:
         self.role = None
         self.user_repo = None
         self.previous_state = LoginState(self)
+        self.admin_repo = None
 
     def set_state(self, state):
         self.previous_state = self.state

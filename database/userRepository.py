@@ -27,23 +27,31 @@ class UserRepository:
         # hash password is not the same as in the database so get password hash from the database and decrypt it
         username = encrypt_data(username)
         print(f"[i] Authenticating user: {username}")
-        with get_connection() as conn:
-            cursor = conn.execute("SELECT password FROM users WHERE username = ?", (username,))
-            row = cursor.fetchone()
-            if verify_password(password, row["password"]):
-                print("[✔] Authentication successful.")
-                return True
-        return False
+        try:
+            with get_connection() as conn:
+                cursor = conn.execute("SELECT password FROM users WHERE username = ?", (username,))
+                row = cursor.fetchone()
+                if verify_password(password, row["password"]):
+                    print("[✔] Authentication successful.")
+                    return True
+            return False
+        except Exception as e:
+            print(f"[✖] Error authenticating user: {e}")
+            return False
     
     def get_user_role(self, username: str) -> str:
         """Get the role of a user by username."""
         username = encrypt_data(username)
-        with get_connection() as conn:
-            cursor = conn.execute("SELECT role FROM users WHERE username = ?", (username,))
-            row = cursor.fetchone()
-            if row:
-                return row["role"]
-        return "unknown"
+        try: 
+            with get_connection() as conn:
+                cursor = conn.execute("SELECT role FROM users WHERE username = ?", (username,))
+                row = cursor.fetchone()
+                if row:
+                    return row["role"]
+            return "unknown"
+        except Exception as e:
+            print(f"[✖] Error getting user role: {e}")
+            return "unknown"
     
     def update_password(self, username: str, new_password: str) -> bool:
         """Update the password for a user."""

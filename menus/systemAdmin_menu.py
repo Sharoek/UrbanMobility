@@ -1,7 +1,16 @@
 from menus.base_menu import BaseMenu
+from states.addtravellerstate import addTravellerState
+from states.backupstate import BackupState
+from states.deleteuserstate import deleteUserState
+from states.logstate import logState
+from states.resetuserpasswordstate import resetUserPasswordState
+from states.searchtravellerstate import searchTravellerState
 from states.updatepasswordstate import UpdatePasswordState
 from states.editscooterstate import editScooterState
 from states.searchscooterstate import searchScooterState
+from states.updateuserstate import updateUserState
+from states.viewusersstate import viewUsersState
+from states.adduserstate import addUserState
 
 class systemAdminMenu(BaseMenu):
     #Same as Service Engineer: 
@@ -42,15 +51,14 @@ class systemAdminMenu(BaseMenu):
             "9": "Update Own Account and Profile",
             "10": "Delete Own Account",
             "11": "Backup System",
-            "12": "Restore Backup with Code",
-            "13": "View Logs File(s)",
-            "14": "Add Traveller",
-            "15": "Update Traveller Information",
-            "16": "Delete Traveller Record",
-            "17": "Add Scooter",
-            "18": "Update Scooter Information",
-            "19": "Delete Scooter",
-            "20": "Search Traveller Information"
+            "12": "View Logs File(s)",
+            "13": "Add Traveller",
+            "14": "Update Traveller Information",
+            "15": "Delete Traveller Record",
+            "16": "Add Scooter",
+            "17": "Update Scooter Information",
+            "18": "Delete Scooter",
+            "19": "Search Traveller Information"
         }
         self.menu_title = f"System Admin Menu - Logged in as: {self.username}"
 
@@ -68,56 +76,43 @@ class systemAdminMenu(BaseMenu):
             return editScooterState(self.context)
         elif choice == 3:
             return searchScooterState(self.context)
-        elif choice == "4":
-            print("Checking user list and roles...")
-            # Logic to check user list and roles
-        elif choice == "5":
-            print("Adding Service Engineer...")
-            # Logic to add Service Engineer
-        elif choice == "6":
-            print("Updating Service Engineer account...")
-            # Logic to update Service Engineer account
-        elif choice == "7":
-            print("Deleting Service Engineer account...")
-            # Logic to delete Service Engineer account
-        elif choice == "8":
-            print("Resetting Service Engineer password...")
-            # Logic to reset Service Engineer password
-        elif choice == "9":
-            print("Updating own account and profile...")
-            # Logic to update own account and profile
-        elif choice == "10":
-            print("Deleting own account...")
-            # Logic to delete own account
-        elif choice == "11":
-            print("Backing up system...")
-            # Logic to backup system
-        elif choice == "12":
-            print("Restoring backup with code...")
-            # Logic to restore backup with code
-        elif choice == "13":
-            print("Viewing logs file(s)...")
-            # Logic to view logs file(s)
+        elif choice == 4:
+            return viewUsersState(self.context)
+        elif choice == 5:
+            return addUserState(self.context)
+        elif choice == 6:
+            return updateUserState(self.context)
+        elif choice == 7:
+            return deleteUserState(self.context)    
+        elif choice == 8:
+            return resetUserPasswordState(self.context)
+        elif choice == 9:
+            return updateUserState(self.context, True)
+        elif choice == 10:
+            return deleteUserState(self.context, True)
+        elif choice == 11:
+            return BackupState(self.context)    ## needs to be triple checked
+        elif choice == 12:
+            return logState(self.context)
+        elif choice == 13:
+            return addTravellerState(self.context)
         elif choice == "14":
-            print("Adding Traveller...")
-            # Logic to add Traveller
-        elif choice == "15":
             print("Updating Traveller information...")
             # Logic to update Traveller information
-        elif choice == "16":
+        elif choice == "15":
             print("Deleting Traveller record...")
             # Logic to delete Traveller record
-        elif choice == "17":
+        elif choice == "16":
             print("Adding Scooter...")
             # Logic to add Scooter
-        elif choice == "18":
+        elif choice == "17":
             print("Updating Scooter information...")
             # Logic to update Scooter information
-        elif choice == "19":
+        elif choice == "18":
             print("Deleting Scooter...")
             # Logic to delete Scooter
-        elif choice == "20":
-            print("Searching Traveller information...")
-            # Logic to search Traveller information
+        elif choice == 19:
+            return searchTravellerState(self.context)
+            
         else:
             print("Invalid choice. Please try again.")

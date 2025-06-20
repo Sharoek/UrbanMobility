@@ -1,3 +1,4 @@
+from database.adminrepository import adminRepository
 from database.userRepository import UserRepository
 from states.appstate import AppState
 from encryption.validators import validate_username, validate_password
@@ -24,11 +25,14 @@ class LoginState(AppState):
                 return
 
             user_repo = UserRepository()
+
             if user_repo.authenticate_user(username, password):
                 self.context.username = username
                 self.context.role = user_repo.get_user_role(username)
                 self.context.user_repo = user_repo
                 self.context.set_state(MenuState(self.context))
+                if self.context.role == "system_admin" or self.context.role == "super_admin":
+                    self.context.admin_repo = adminRepository()
                 return
 
             print(f"Invalid credentials. Attempt {attempt + 1}/3\n")
