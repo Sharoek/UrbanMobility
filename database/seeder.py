@@ -1,4 +1,6 @@
+from database.adminrepository import adminRepository
 from database.connection import get_connection
+from models.restorecode import restoreCode
 from .queries import INSERT_USER
 from models.user import User
 from models.profile import Profile
@@ -6,12 +8,13 @@ from .userRepository import UserRepository
 from .seederRepository import seederRepository
 from models.scooter import Scooter
 from models.traveller import Traveller
-
+from uuid import uuid4
 
 
 def seed_database():
     sr = seederRepository()
     ur = UserRepository()
+        
     sys_admin = User.create(
         username="sysadmin01",
         password="StrongPass!123",
@@ -85,8 +88,6 @@ def seed_database():
         mileage=150.0,
         last_maintenance_date='2025-01-15'
     )
-
-
     sr.save_scooter_to_db(scooter1)
     sr.save_scooter_to_db(scooter2)
     sr.save_traveller_to_db(traveller1)

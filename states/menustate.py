@@ -7,7 +7,6 @@ class MenuState(AppState):
     def run(self):
         role = self.context.role
         username = self.context.username
-        print(f"\nLogged in as: {username} (Role: {role})\n")
         if role == "super_admin":
             SuperAdminMenu(username, self.context).run()
         elif role == "system_admin":

@@ -49,6 +49,17 @@ CREATE TABLE IF NOT EXISTS travellers (
 );
 """
 
+CREATE_RESTORE_CODE_TABLE = """
+CREATE TABLE IF NOT EXISTS restore_codes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    code TEXT NOT NULL UNIQUE,
+    backup_filename TEXT NOT NULL,
+    used BOOLEAN NOT NULL DEFAULT 0,
+    generated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);"""
+
 INSERT_USER = "INSERT INTO users (username, password, role, first_name, last_name, registration_date) VALUES (?, ?, ?, ?, ?, ?);"
 GET_USER_BY_ID = "SELECT * FROM users WHERE id = ?;"
 GET_ALL_USERS = "SELECT * FROM users;"

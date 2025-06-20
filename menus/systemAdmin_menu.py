@@ -1,6 +1,9 @@
 from menus.base_menu import BaseMenu
+from states.addscooterstate import addScooterState
 from states.addtravellerstate import addTravellerState
 from states.backupstate import BackupState
+from states.deletescooterstate import deleteScooterState
+from states.deletetravellerstate import deleteTravellerState
 from states.deleteuserstate import deleteUserState
 from states.logstate import logState
 from states.resetuserpasswordstate import resetUserPasswordState
@@ -8,6 +11,7 @@ from states.searchtravellerstate import searchTravellerState
 from states.updatepasswordstate import UpdatePasswordState
 from states.editscooterstate import editScooterState
 from states.searchscooterstate import searchScooterState
+from states.updatetravellerstate import updateTravellerState
 from states.updateuserstate import updateUserState
 from states.viewusersstate import viewUsersState
 from states.adduserstate import addUserState
@@ -87,8 +91,10 @@ class systemAdminMenu(BaseMenu):
         elif choice == 8:
             return resetUserPasswordState(self.context)
         elif choice == 9:
+            #update own account
             return updateUserState(self.context, True)
         elif choice == 10:
+            #delete own account
             return deleteUserState(self.context, True)
         elif choice == 11:
             return BackupState(self.context)    ## needs to be triple checked
@@ -96,21 +102,17 @@ class systemAdminMenu(BaseMenu):
             return logState(self.context)
         elif choice == 13:
             return addTravellerState(self.context)
-        elif choice == "14":
-            print("Updating Traveller information...")
-            # Logic to update Traveller information
-        elif choice == "15":
-            print("Deleting Traveller record...")
-            # Logic to delete Traveller record
-        elif choice == "16":
-            print("Adding Scooter...")
-            # Logic to add Scooter
+        elif choice == 14:
+            return updateTravellerState(self.context)
+        elif choice == 15:
+            return deleteTravellerState(self.context)   
+        elif choice == 16:
+            return addScooterState(self.context)    
         elif choice == "17":
             print("Updating Scooter information...")
             # Logic to update Scooter information
-        elif choice == "18":
-            print("Deleting Scooter...")
-            # Logic to delete Scooter
+        elif choice == 18:
+            return deleteScooterState(self.context)
         elif choice == 19:
             return searchTravellerState(self.context)
             

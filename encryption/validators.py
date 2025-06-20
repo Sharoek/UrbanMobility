@@ -217,7 +217,6 @@ def validate_model(model: str) -> bool:
     # Allow letters, numbers, spaces, hyphens, underscores, dots
     pattern = r'^[A-Za-z0-9\s\-_.]+$'
     if re.match(pattern, model):
-        print("[✖] Model must be alphanumeric, spaces, hyphens, underscores or dots only.")
         return True
     
     return False

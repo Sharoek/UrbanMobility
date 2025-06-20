@@ -3,6 +3,7 @@ from encryption.encryption import decrypt_data, encrypt_data
 from encryption.hashing import hash_password
 from database.connection import get_connection
 from models.profile import Profile
+from models.restorecode import restoreCode
 from models.user import User
 
 class adminRepository:
@@ -262,4 +263,176 @@ class adminRepository:
         return [row for row, _ in matched_travellers]
 
 
+    def delete_scooter(self, scooter_id):
+        try:
+            with get_connection() as conn:
+                conn.execute("DELETE FROM scooters WHERE id = ?", (scooter_id,))
+                conn.commit()
+                print(f"[✔] Scooter ID {scooter_id} deleted successfully.")
+                return True
+        except Exception as e:
+            print(f"[✖] Error deleting scooter: {e}")
+            return False
+
+    def update_traveller(self, customer_id, item, value):
+        """Update a specific field of a traveller in the database."""
+        allowed_columns = {
+            "first_name",
+            "last_name",
+            "gender",
+            "street_name",
+            "house_number",
+            "zip_code",
+            "city",
+            "email_address",
+            "mobile_phone",
+            "driving_license_number",
+        }
+
+        if item not in allowed_columns:
+            print(f"[✖] Invalid field: '{item}' is not allowed to be updated.")
+            return False
+
+      
+        value = encrypt_data(value)
+
+        query = f"UPDATE travellers SET {item} = ? WHERE customer_id = ?"
+        try:
+            with get_connection() as conn:
+                conn.execute(query, (value, customer_id))
+                conn.commit()
+                print(f"[✔] Traveller ID {customer_id}: '{item}' updated successfully.")
+                return True
+        except Exception as e:
+            print(f"[✖] Error updating traveller: {e}")
+            return False
+        
+    def delete_traveller(self, customer_id):
+        try:
+            with get_connection() as conn:
+                conn.execute("DELETE FROM travellers WHERE customer_id = ?", (customer_id, ))
+                conn.commit()
+                print(f"[✔] Traveller ID {customer_id} deleted successfully.")
+                return True
+        except Exception as e:
+            print(f"[✖] Error deleting traveller: {e}")
+            return False
+        
+    def add_restorecode(self, restorecode: restoreCode):
+        if not restorecode:
+            print("[✖] Restore code is required.")
+            return False
+        #encode necessary 
+        restorecode.code = encrypt_data(restorecode.code)
+        restorecode.backup_filename = encrypt_data(restorecode.backup_filename)
+
+        try:
+            with get_connection() as conn:
+                conn.execute(
+                    "INSERT INTO restore_codes (code, user_id, backup_filename, used, generated_at) VALUES (?, ?, ?, ?, ?)",
+                    (restorecode.code, restorecode.user_id, restorecode.backup_filename, restorecode.used, restorecode.generated_at),
+                )
+                conn.commit()
+                print(f"[✔] Restore code added successfully.")
+                return True
+        except Exception as e:
+            print(f"[✖] Error adding restore code: {e}")
+            return False
+        
+    def update_restorecode_used(self, used: bool, id: int):       
+        try:
+            with get_connection() as conn:
+                conn.execute(
+                    "UPDATE restore_codes SET used = ? WHERE id = ?",
+                    (used, id),
+                )
+                conn.commit()
+                print(f"[✔] Restore code column used updated successfully.")
+                return True
+        except Exception as e:
+            print(f"[✖] Error updating restore code: {e}")
+            return False
+        
+    def get_all_restorecodes_used_is_true(self):
+        try:
+            with get_connection() as conn:
+                cursor = conn.execute("SELECT * FROM restore_codes WHERE used = 1") 
+                rows = cursor.fetchall()
+                if not rows:
+                    print("[✖] No restore codes found.")
+                    return []
+                return rows
+        except Exception as e:
+            print(f"[✖] Error getting restore codes: {e}")
+            return []
+    
+    def decrypt_restorecodes(self, restore_codes):
+        decrypted_restore_codes = []
+        for restore_code in restore_codes:
+            decrypted_restore_code = dict(restore_code)
+            decrypted_restore_code['code'] = decrypt_data(restore_code['code'])
+            decrypted_restore_code['backup_filename'] = decrypt_data(restore_code['backup_filename'])
+            decrypted_restore_code['used'] = restore_code['used']
+            decrypted_restore_codes.append(decrypted_restore_code)
+        return decrypted_restore_codes
+    
+    def get_restorecodes_by_user(self, user_name):
+        user_name = encrypt_data(user_name)
+        try:
+            with get_connection() as conn:
+                cursor = conn.execute("SELECT * FROM restore_codes WHERE user_id = (SELECT id FROM users WHERE username = ?)", (user_name,))
+                rows = cursor.fetchall()
+                if not rows:
+                    print("[✖] No restore codes found.")
+                    return []
+                return rows
+        except Exception as e:
+            print(f"[✖] Error getting restore codes: {e}")
+            return []
+    
+    def load_restore_code(self):
+        try:
+            with get_connection() as conn:
+                cursor = conn.execute("SELECT * FROM restore_codes")
+                rows = cursor.fetchall()
+                if not rows:
+                    print("[✖] No restore codes found.")
+                    return []
+                restore_codes = [
+               restoreCode(
+                    id=row["id"],
+                    code=row["code"],
+                    backup_filename=row["backup_filename"],
+                    used=row["used"],
+                    user_id=row["user_id"],
+                    generated_at=row["generated_at"]
+                ) for row in rows
+            ]
+            return restore_codes
+        except Exception as e:
+            print(f"[✖] Error getting restore codes: {e}")
+            return []
+    
+    def re_insertcodes(self, restore_codes: list[restoreCode]):
+        try:
+            with get_connection() as conn:
+                for restore_code in restore_codes:
+                    print(f"Insert id={restore_code.id} code={restore_code.code} user_id={restore_code.user_id}")
+                    conn.execute(
+                        "INSERT INTO restore_codes (id, code, user_id, backup_filename, used, generated_at) VALUES (?, ?, ?, ?, ?, ?)",
+                        (
+                            restore_code.id,
+                            restore_code.code,
+                            restore_code.user_id,
+                            restore_code.backup_filename,
+                            restore_code.used,
+                            restore_code.generated_at
+                        ),
+                    )
+                conn.commit()
+                print(f"[✔] Restore codes re-inserted successfully.")
+                return True
+        except Exception as e:
+            print(f"[✖] Error re-inserting restore codes: {e}")
+            return False
 

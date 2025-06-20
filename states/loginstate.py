@@ -14,24 +14,28 @@ class LoginState(AppState):
             if not username or not password:
                 print("Username and password cannot be empty.\n")
                 continue
-            if not validate_username(username) or not validate_password(password):
-                print("Username or password contains invalid characters.\n")
-                continue
+
+            user_repo = UserRepository()
 
             if username == "super_admin" and password == "Admin_123?":
                 self.context.username = username
                 self.context.role = "super_admin"
+                self.context.user_repo = user_repo
                 self.context.set_state(MenuState(self.context))
+                self.context.admin_repo = adminRepository()
                 return
+            
+            if not validate_username(username) or not validate_password(password):
+                print("Username or password contains invalid characters.\n")
+                continue
 
-            user_repo = UserRepository()
-
+            
             if user_repo.authenticate_user(username, password):
                 self.context.username = username
                 self.context.role = user_repo.get_user_role(username)
                 self.context.user_repo = user_repo
                 self.context.set_state(MenuState(self.context))
-                if self.context.role == "system_admin" or self.context.role == "super_admin":
+                if self.context.role == "system_admin":
                     self.context.admin_repo = adminRepository()
                 return
 

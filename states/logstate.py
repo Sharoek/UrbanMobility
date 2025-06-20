@@ -20,6 +20,8 @@ class logState(AppState):
             for i, log in enumerate(logs, start=1):
                 print(f"{i:<3} | {log['date']} | {log['time']} | {log['username']:<8} | {log['activity'][:26]:<26} | {log['info'][:23]:<23} | {'YES' if log['suspicious'] else 'NO '}")
 
+            log_manager.mark_logs_as_read()
+
             input("\nPress Enter to return to the menu...")
 
 

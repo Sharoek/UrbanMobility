@@ -1,4 +1,20 @@
 from menus.base_menu import BaseMenu
+from states.addscooterstate import addScooterState
+from states.addtravellerstate import addTravellerState
+from states.adduserstate import addUserState
+from states.backupstate import BackupState
+from states.deletescooterstate import deleteScooterState
+from states.deletetravellerstate import deleteTravellerState
+from states.deleteuserstate import deleteUserState
+from states.editscooterstate import editScooterState
+from states.logstate import logState
+from states.resetuserpasswordstate import resetUserPasswordState
+from states.restorecodestate import restoreCodeState
+from states.searchscooterstate import searchScooterState
+from states.searchtravellerstate import searchTravellerState
+from states.updatetravellerstate import updateTravellerState
+from states.updateuserstate import updateUserState
+from states.viewusersstate import viewUsersState
 
 class SuperAdminMenu(BaseMenu):
     # • To update the attributes of scooters in the system 
@@ -31,7 +47,7 @@ class SuperAdminMenu(BaseMenu):
             "2": "Search Scooter Information",
             "3": "Check User List and Roles",
             "4": "Add Service Engineer",
-            "5": "Update Service Engineer Account",
+            "5": "Update Service Engineer Accsount",
             "6": "Delete Service Engineer Account",
             "7": "Reset Service Engineer Password",
             "8": "View Logs File(s)",
@@ -39,88 +55,64 @@ class SuperAdminMenu(BaseMenu):
             "10": "Update Traveller Information",
             "11": "Delete Traveller Record",
             "12": "Add Scooter",
-            "13": "Update Scooter Information",
-            "14": "Delete Scooter",
-            "15": "Search Traveller Information",
-            "16": "Add System Administrator",
-            "17": "Update System Administrator Account",
-            "18": "Delete System Administrator Account",
-            "19": "Reset System Administrator Password",
-            "20": "Backup System",
-            "21": "Restore Backup with Code"
+            "13": "Delete Scooter",
+            "14": "Search Traveller Information",
+            "15": "Add System Administrator",
+            "16": "Update System Administrator Account",
+            "17": "Delete System Administrator Account",
+            "18": "Reset System Administrator Password",
+            "19": "Backup System",
+            "20": "Restore Backup with Code",
+            "0": "Exit"
         }
-        self.menu_title = f"Super Admin Menu - Logged in as: {self.username}"
 
     def show_options(self):
-        print(self.menu_title)
         for key, value in self.menu_options.items():
             print(f"{key}. {value}")
     
     def handle_choice(self, choice):
-        if choice == "1":
-            print("Updating scooter attributes...")
-            # Logic to update scooter attributes
-        elif choice == "2":
-            print("Searching scooter information...")
-            # Logic to search scooter information
-        elif choice == "3":
-            print("Checking user list and roles...")
-            # Logic to check user list and roles
-        elif choice == "4":
-            print("Adding Service Engineer...")
-            # Logic to add Service Engineer
-        elif choice == "5":
-            print("Updating Service Engineer account...")
-            # Logic to update Service Engineer account
-        elif choice == "6":
-            print("Deleting Service Engineer account...")
-            # Logic to delete Service Engineer account
-        elif choice == "7":
-            print("Resetting Service Engineer password...")
-            # Logic to reset Service Engineer password
-        elif choice == "8":
-            print("Viewing logs file(s)...")
-            # Logic to view logs file(s)
-        elif choice == "9":
-            print("Adding Traveller...")
-            # Logic to add Traveller
-        elif choice == "10":
-            print("Updating Traveller information...")
-            # Logic to update Traveller information
-        elif choice == "11":
-            print("Deleting Traveller record...")
-            # Logic to delete Traveller record
-        elif choice == "12":
-            print("Adding Scooter...")
-            # Logic to add Scooter
-        elif choice == "13":
-            print("Updating Scooter information...")
-            # Logic to update Scooter information
-        elif choice == "14":
-            print("Deleting Scooter...")
-            # Logic to delete Scooter
-        elif choice == "15":
-            print("Searching Traveller information...")
-            # Logic to search Traveller information
-        elif choice == "16":
-            print("Adding System Administrator...")
-            # Logic to add System Administrator
-        elif choice == "17":
-            print("Updating System Administrator account...")
-            # Logic to update System Administrator account
-        elif choice == "18":
-            print("Deleting System Administrator account...")
-            # Logic to delete System Administrator account
-        elif choice == "19":
-            print("Resetting System Administrator password...")
-            # Logic to reset System Administrator password
-        elif choice == "20":
-            print("Backing up system...")
-            # Logic to backup system
-        elif choice == "21":
-            print("Restoring backup with code...")
-            # Logic to restore backup with code
+        if choice == 1:
+            return editScooterState(self.context)
+        elif choice == 2:
+            return searchScooterState(self.context)
+        elif choice == 3:
+            return viewUsersState(self.context)
+        elif choice == 4:
+            return addUserState(self.context)
+        elif choice == 5:
+            return updateUserState(self.context)
+        elif choice == 6:
+            return deleteUserState(self.context) 
+        elif choice == 7:
+            return resetUserPasswordState(self.context)
+        elif choice == 8:
+            return logState(self.context)
+        elif choice == 9:
+            return addTravellerState(self.context)
+        elif choice == 10:
+            return updateTravellerState(self.context)
+        elif choice == 11:
+            return deleteTravellerState(self.context) 
+        elif choice == 12:
+            return addScooterState(self.context) 
+        elif choice == 13:
+            return deleteScooterState(self.context)
+        elif choice == 14:
+            return searchTravellerState(self.context)
+        elif choice == 15:
+            return addUserState(self.context, menu="system_admin")
+        elif choice == 16:
+            return updateUserState(self.context, menu="system_admin")
+        elif choice == 17:
+            return deleteUserState(self.context, menu="system_admin") 
+        elif choice == 18:
+            return resetUserPasswordState(self.context, user="system_admin")
+        elif choice == 19:
+            return BackupState(self.context)
+        elif choice == 20:
+            return restoreCodeState(self.context)
+        elif choice == 0:
+            exit()      
         else:
             print("Invalid choice. Please try again.")
-        
-        return True
+            return None

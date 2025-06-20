@@ -7,6 +7,7 @@ class deleteUserState(AppState):
         super().__init__(context)
         self.menu = menu
         self.self_delete = self_delete
+
     def run(self):
         print("DELETING USER")
         if self.self_delete:
@@ -29,6 +30,7 @@ class deleteUserState(AppState):
             users = self.context.admin_repo.get_users_by_role(self.menu)
             for user in users:
                 print(f"{index}. ID: {user[0]}, Username: {user[1]}, Name: {user[4]} {user[5]}")
+                index += 1
             print("0. Exit")
             choice = verify_number_input("Select a user to delete: ", 0, len(users))
             if choice == 0:
