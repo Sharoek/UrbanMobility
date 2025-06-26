@@ -17,7 +17,6 @@ class BaseMenu(ABC):
                 
                 if state is not None:
                     self.context.set_state(state)
-                    print(f"State changed to: {state}")
                     state.run()
                 else:
                     return
