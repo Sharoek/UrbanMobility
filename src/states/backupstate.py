@@ -14,22 +14,25 @@ class BackupState(AppState):
         self.log_manager = LogManager()
 
     def run(self):
-        
-        while True:
-            print("\n--- Backup Management ---")
-            print("1. Create Backup")
-            print("2. Restore Backup")
-            print("0. Go Back")
+        try:
+            while True:
+                print("\n--- Backup Management ---")
+                print("1. Create Backup")
+                print("2. Restore Backup")
+                print("0. Go Back")
 
-            choice = verify_number_input("Enter your choice: ", 0, 2)
+                choice = verify_number_input("Enter your choice: ", 0, 2)
 
-            if choice == 0:
-                self.context.go_back()
-                break
-            elif choice == 1:
-                self.create_backup()
-            elif choice == 2:
-                self.restore_backup()
+                if choice == 0:
+                    self.context.go_back()
+                    break
+                elif choice == 1:
+                    self.create_backup()
+                elif choice == 2:
+                    self.restore_backup()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            self.log_manager.log(self.context.username, "Backup Management Error", f"Error: {e}", True)
 
     def create_backup(self):
         if not os.path.exists(self.BACKUP_DIR):
@@ -103,7 +106,6 @@ class BackupState(AppState):
             restorecodes = self.context.admin_repo.decrypt_restorecodes(encrypted_codes)
 
             # Step 2: Select restore code
-            print("Available restore codes:")
             for i, code in enumerate(restorecodes, 1):
                 print(f"{i}. {code['code']} for {code['backup_filename']}")
             print("0. Cancel")

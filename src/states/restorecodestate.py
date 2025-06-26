@@ -121,7 +121,7 @@ class restoreCodeState(AppState):
                 return
 
             selected_rc = decrypted_rc[choice - 1]
-            self.context.admin_repo.delete_restorecode(selected_rc["code"])
+            self.context.admin_repo.reset_selected_restorecodes(selected_rc["code"])
 
             print("✅ Restore code revoked successfully.")
             self.log_manager.log(

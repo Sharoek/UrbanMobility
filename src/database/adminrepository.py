@@ -355,7 +355,7 @@ class adminRepository:
     def get_all_restorecodes_used_is_true(self):
         try:
             with get_connection() as conn:
-                cursor = conn.execute("SELECT * FROM restore_codes WHERE used = 1") 
+                cursor = conn.execute("SELECT restore_codes.*, users.username FROM restore_codes JOIN users ON restore_codes.user_id = users.id WHERE restore_codes.used = 1") 
                 rows = cursor.fetchall()
                 if not rows:
                     print("[✖] No restore codes found.")
@@ -379,7 +379,7 @@ class adminRepository:
         user_name = encrypt_data(user_name)
         try:
             with get_connection() as conn:
-                cursor = conn.execute("SELECT * FROM restore_codes WHERE user_id = (SELECT id FROM users WHERE username = ?)", (user_name,))
+                cursor = conn.execute("SELECT * FROM restore_codes WHERE user_id = (SELECT id FROM users WHERE username = ? AND used = 0)", (user_name,))
                 rows = cursor.fetchall()
                 if not rows:
                     print("[✖] No restore codes found.")
@@ -435,3 +435,23 @@ class adminRepository:
             print(f"[✖] Error re-inserting restore codes: {e}")
             return False
 
+    def reset_selected_restorecodes(self, restore_code_id: int):
+
+        if not restore_code_id:
+            print("[✖] No restore code ID provided.")
+            return
+        
+        #Restore code is unencrypted
+        restore_code_id = encrypt_data(restore_code_id)
+
+        try:
+            with get_connection() as conn:
+                cursor = conn.cursor()
+                query = f"UPDATE restore_codes SET used = 0 WHERE code = ?"
+                cursor.execute(query, (restore_code_id,))
+                conn.commit()
+                print(f"[✔] Reset {cursor.rowcount} restore code(s).")
+                return True
+        except Exception as e:
+            print(f"[✖] Error resetting selected restore codes: {e}")
+            return False
