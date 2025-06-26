@@ -83,7 +83,6 @@ class adminRepository:
             return False
 
         if item == "password":
-            from encryption.hashing import hash_password
             value = hash_password(value)
         
         if item == "username" or item == "first_name" or item == "last_name":

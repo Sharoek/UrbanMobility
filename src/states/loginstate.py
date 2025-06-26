@@ -1,3 +1,4 @@
+from getpass import getpass
 from database.adminrepository import adminRepository
 from database.userRepository import UserRepository
 from states.appstate import AppState
@@ -15,7 +16,7 @@ class LoginState(AppState):
         print("=== Urban Mobility System ===\n")
         for attempt in range(3):
             username = input("Username: ").strip()
-            password = input("Password: ").strip()
+            password = getpass("Password: ").strip()
 
             if not username or not password:
                 print("Username and password cannot be empty.\n")
